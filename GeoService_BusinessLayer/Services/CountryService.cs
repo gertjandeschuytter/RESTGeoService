@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace DomeinLaag.Services
 {
-    public class LandService
+    public class CountryService
     {
         #region Properties
         private readonly ICountryRepository _repository;
         #endregion
 
         #region Constructors
-        public LandService(ICountryRepository repository)
+        public CountryService(ICountryRepository repository)
         {
             _repository = repository;
         }
