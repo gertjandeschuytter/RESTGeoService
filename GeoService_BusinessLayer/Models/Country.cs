@@ -14,7 +14,7 @@ namespace GeoService_BusinessLayer.Models {
         public decimal Surface { get; private set; }
         public Continent Continent { get; private set; }
 
-        public Country(int id, string name, int population, decimal surface, Continent continent) : this(name, population, surface, continent);
+        public Country(int id, string name, int population, decimal surface, Continent continent) : this(name, population, surface, continent)
         {
             ZetId(id);
         }
