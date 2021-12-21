@@ -37,7 +37,7 @@ namespace GeoService_BusinessLayer.Models
         }
         public void ZetNaam(string name)
         {
-            if (string.IsNullOrWhiteSpace(Name)) throw new ContinentException("Naam mag niet leeg zijn");
+            if (string.IsNullOrWhiteSpace(name)) throw new ContinentException("Naam mag niet leeg zijn");
             Name = name;
         }
         public void ZetBevolkingsaantal(int population)

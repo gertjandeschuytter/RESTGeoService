@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.31829.152
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoService_BusinessLayer", "GeoService_BusinessLayer\GeoService_BusinessLayer.csproj", "{EA240B01-60A9-45BF-80BE-A7526BC86B40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoService_DataLayer", "GeoService_DataLayer\GeoService_DataLayer.csproj", "{3C32D2C5-10FE-4E0B-9E30-492FC6B4217D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADOTestOmgeving", "ADOTestOmgeving\ADOTestOmgeving.csproj", "{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{EA240B01-60A9-45BF-80BE-A7526BC86B40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA240B01-60A9-45BF-80BE-A7526BC86B40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA240B01-60A9-45BF-80BE-A7526BC86B40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C32D2C5-10FE-4E0B-9E30-492FC6B4217D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C32D2C5-10FE-4E0B-9E30-492FC6B4217D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C32D2C5-10FE-4E0B-9E30-492FC6B4217D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C32D2C5-10FE-4E0B-9E30-492FC6B4217D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
