@@ -31,11 +31,14 @@ namespace DataLaag.ADO
             return connection;
         }
 
-        public List<City> GeefStedenLand(int id)
+        public List<City> GeefStedenLand(int countryId)
         {
-            string sql = "SELECT c.Id AS ContinentId, c.Naam AS ContinentNaam, c.Bevolkingsaantal AS ContinentBevolkingsaantal, l.Id AS LandId, l.Naam AS LandNaam, l.Bevolkingsaantal AS LandBevolkingsaantal, l.Oppervlakte, l.ContinentId, s.* FROM [dbo].[Stad] s " +
-                "INNER JOIN [dbo].[Land] l ON s.LandId = l.Id " +
-                "INNER JOIN [dbo].[Continent] c ON l.ContinentId = c.Id WHERE l.Id = @Id;";
+            string sql =
+                "SELECT c.ContinentId, c.Name AS ContinentName, c.Population AS ContinentPopulation, Country.CountryId, Country.Name AS CountryName," +
+                " Country.Population AS CountryPopulation, Country.Surface, Country.ContinentId, city.* FROM [dbo].[City] city " +
+                "INNER JOIN [dbo].[Country] Country ON city.CountryId = Country.CountryId " +
+                "INNER JOIN [dbo].[Continent] c ON Country.ContinentId = c.ContinentId " +
+                "WHERE Country.countryId = @countryId;";
             SqlConnection connection = GetConnection();
             using SqlCommand command = new(sql, connection);
             try
@@ -44,19 +47,19 @@ namespace DataLaag.ADO
                 Continent continent = null;
                 Country land = null;
                 List<City> steden = new();
-                command.Parameters.AddWithValue("@Id", id);
+                command.Parameters.AddWithValue("@countryId", countryId);
                 IDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     if (continent == null)
                     {
-                        continent = new((int)reader["ContinentId"], (string)reader["ContinentName"], (int)reader["Bevolkingsaantal"]);
+                        continent = new((int)reader["ContinentId"], (string)reader["ContinentName"], (int)reader["ContinentPopulation"]);
                     }
                     if (land == null)
                     {
-                        land = new((int)reader["LandId"], (string)reader["LandNaam"], (int)reader["LandBevolkingsaantal"], (decimal)reader["Oppervlakte"], continent);
+                        land = new((int)reader["CountryId"], (string)reader["CountryName"], (int)reader["CountryPopulation"], (decimal)reader["Surface"], continent);
                     }
-                    City stad = new((int)reader["Id"], (string)reader["Naam"], (int)reader["Bevolkingsaantal"], (bool)reader["IsHoofdstad"], land);
+                    City stad = new((int)reader["Id"], (string)reader["Name"], (int)reader["Population"], (bool)reader["IsCapital"], land);
                     steden.Add(stad);
                 }
                 reader.Close();
@@ -72,20 +75,17 @@ namespace DataLaag.ADO
             }
         }
 
-        public bool HeeftSteden(int landId)
+        public bool HeeftSteden(int countryId)
         {
-            string sql = "SELECT COUNT(*) FROM [dbo].[Stad] WHERE LandId = @LandId";
+            string sql = "SELECT COUNT(*) FROM [dbo].[City] WHERE CountryId = @countryId";
             SqlConnection connection = GetConnection();
             using SqlCommand command = new(sql, connection);
             try
             {
                 connection.Open();
-                command.Parameters.AddWithValue("@LandId", landId);
+                command.Parameters.AddWithValue("@countryId", countryId);
                 int n = (int)command.ExecuteScalar();
-                if (n > 0)
-                {
-                    return true;
-                }
+                if (n > 0) return true;
                 return false;
             }
             catch (Exception ex)
@@ -100,7 +100,7 @@ namespace DataLaag.ADO
 
         public City StadToevoegen(City stad)
         {
-            string sql = "INSERT INTO [dbo].[Stad] (Naam, Bevolkingsaantal, IsHoofdStad, LandId) VALUES (@Naam, @Bevolkingsaantal, @IsHoofdStad, @LandId)";
+            string sql = "INSERT INTO [dbo].[City] (Name, Population, IsCapital, CountryId) OUTPUT INSERTED.Id VALUES (@Name, @Population, @IsCapital, @CountryId)";
             SqlConnection connection = GetConnection();
             using SqlCommand command = new(sql, connection);
             connection.Open();
@@ -108,12 +108,13 @@ namespace DataLaag.ADO
             try
             {
                 command.Transaction = transaction;
-                command.Parameters.AddWithValue("@Naam", stad.Name);
-                command.Parameters.AddWithValue("@Bevolkingsaantal", stad.Population);
-                command.Parameters.AddWithValue("@IsHoofdStad", stad.IsCapital);
-                command.Parameters.AddWithValue("@LandId", stad.Country.Id);
-                command.ExecuteNonQuery();
+                command.Parameters.AddWithValue("@Name", stad.Name);
+                command.Parameters.AddWithValue("@Population", stad.Population);
+                command.Parameters.AddWithValue("@IsCapital", stad.IsCapital);
+                command.Parameters.AddWithValue("@CountryId", stad.Country.Id);
+                var id = (int)command.ExecuteScalar();
                 transaction.Commit();
+                stad.ZetId(id);
                 return stad;
             }
             catch (Exception ex)
@@ -127,20 +128,17 @@ namespace DataLaag.ADO
             }
         }
 
-        public bool BestaatStad(int id)
+        public bool BestaatStad(int cityId)
         {
-            string sql = "SELECT COUNT(*) FROM [dbo].[Stad] WHERE Id = @Id";
+            string sql = "SELECT COUNT(*) FROM [dbo].[City] WHERE Id = @cityId";
             SqlConnection connection = GetConnection();
             using SqlCommand command = new(sql, connection);
             try
             {
                 connection.Open();
-                command.Parameters.AddWithValue("@Id", id);
+                command.Parameters.AddWithValue("@cityId", cityId);
                 int n = (int)command.ExecuteScalar();
-                if (n > 0)
-                {
-                    return true;
-                }
+                if (n > 0) return true;
                 return false;
             }
             catch (Exception ex)
@@ -153,11 +151,14 @@ namespace DataLaag.ADO
             }
         }
 
-        public City StadWeergeven(int stadId)
+        public City StadWeergeven(int cityId)
         {
-            string sql = "SELECT c.Id AS ContinentId, c.Naam AS ContinentNaam, c.Bevolkingsaantal AS ContinentBevolkingsaantal, l.Id AS LandId, l.Naam AS LandNaam, l.Bevolkingsaantal AS LandBevolkingsaantal, l.Oppervlakte, l.ContinentId, s.* FROM [dbo].[Stad] s " +
-                "INNER JOIN [dbo].[Land] l ON s.LandId = l.Id " +
-                "INNER JOIN [dbo].[Continent] c ON l.ContinentId = c.Id WHERE s.Id = @Id;";
+            string sql =
+                "SELECT Continent.ContinentId, Continent.Name AS ContinentName, Continent.Population AS ContinentPopulation, Country.CountryId, Country.Name AS CountryName, " +
+                "Country.Population AS CountryPopulation, Country.Surface, Country.ContinentId, city.* FROM [dbo].[City] city " +
+                "INNER JOIN [dbo].[Country] Country ON city.CountryId = Country.CountryId " +
+                "INNER JOIN [dbo].[Continent] Continent ON Country.ContinentId = Continent.ContinentId " +
+                "WHERE city.Id = @cityId;";
             SqlConnection connection = GetConnection();
             using SqlCommand command = new(sql, connection);
             try
@@ -165,18 +166,18 @@ namespace DataLaag.ADO
                 connection.Open();
                 Continent continent = null;
                 Country country = null;
-                command.Parameters.AddWithValue("@Id", stadId);
+                command.Parameters.AddWithValue("@cityId", cityId);
                 IDataReader reader = command.ExecuteReader();
                 reader.Read();
                 if (continent == null)
                 {
-                    continent = new((int)reader["ContinentId"], (string)reader["ContinentNaam"], (int)reader["Bevolkingsaantal"]);
+                    continent = new((int)reader["ContinentId"], (string)reader["ContinentName"], (int)reader["ContinentPopulation"]);
                 }
                 if (country == null)
                 {
-                    country = new((int)reader["LandId"], (string)reader["LandNaam"], (int)reader["LandBevolkingsaantal"], (decimal)reader["Oppervlakte"], continent);
+                    country = new((int)reader["CountryId"], (string)reader["CountryName"], (int)reader["CountryPopulation"], (decimal)reader["Surface"], continent);
                 }
-                City city = new((int)reader["Id"], (string)reader["Naam"], (int)reader["Bevolkingsaantal"], (bool)reader["IsHoofdstad"], country);
+                City city = new((int)reader["Id"], (string)reader["Name"], (int)reader["Population"], (bool)reader["IsCapital"], country);
                 reader.Close();
                 return city;
             }
@@ -190,15 +191,15 @@ namespace DataLaag.ADO
             }
         }
 
-        public void StadVerwijderen(int stadId)
+        public void StadVerwijderen(int cityId)
         {
-            string sql = "DELETE FROM [dbo].[Stad] WHERE Id = @Id";
+            string sql = "DELETE FROM [dbo].[City] WHERE Id = @cityId";
             SqlConnection connection = GetConnection();
             using SqlCommand command = new(sql, connection);
             try
             {
                 connection.Open();
-                command.Parameters.AddWithValue("@Id", stadId);
+                command.Parameters.AddWithValue("@cityId", cityId);
                 command.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -213,7 +214,7 @@ namespace DataLaag.ADO
 
         public City StadUpdaten(City city)
         {
-            string sql = "UPDATE [dbo].[Stad] SET Naam = @Naam, Bevolkingsaantal = @Bevolkingsaantal, IsHoofdStad = @IsHoofdStad, LandId = @LandId WHERE Idd = @Id";
+            string sql = "UPDATE [dbo].[City] SET Name = @Name, Population = @Population, IsCapital = @IsCapital, CountryId = @CountryId WHERE Id = @CityId";
             SqlConnection connection = GetConnection();
             using SqlCommand command = new(sql, connection);
             connection.Open();
@@ -221,11 +222,11 @@ namespace DataLaag.ADO
             try
             {
                 command.Transaction = transaction;
-                command.Parameters.AddWithValue("@Id", city.Id);
-                command.Parameters.AddWithValue("@Naam", city.Name);
-                command.Parameters.AddWithValue("@Bevolkingsaantal", city.Population);
-                command.Parameters.AddWithValue("@IsHoofdStad", city.IsCapital);
-                command.Parameters.AddWithValue("@LandId", city.Country.Id);
+                command.Parameters.AddWithValue("@CityId", city.Id);
+                command.Parameters.AddWithValue("@Name", city.Name);
+                command.Parameters.AddWithValue("@Population", city.Population);
+                command.Parameters.AddWithValue("@IsCapital", city.IsCapital);
+                command.Parameters.AddWithValue("@CountryId", city.Country.Id);
                 command.ExecuteNonQuery();
                 transaction.Commit();
                 return city;
@@ -241,11 +242,14 @@ namespace DataLaag.ADO
             }
         }
 
-        public bool ControleerBevolkingsaantal(int landId, int bevolkingsaantal)
+        public bool ControleerBevolkingsaantal(int ContinentId, int Population)
         {
-            string sql = "SELECT c.Id AS ContinentId, c.Naam AS ContinentNaam, c.Bevolkingsaantal AS ContinentBevolkingsaantal, l.Id AS LandId, l.Naam AS LandNaam, l.Bevolkingsaantal AS LandBevolkingsaantal, l.Oppervlakte, l.ContinentId, s.* FROM [dbo].[Stad] s " +
-                "INNER JOIN [dbo].[Land] l ON s.LandId = l.Id " +
-                "INNER JOIN [dbo].[Continent] c ON l.ContinentId = c.Id WHERE l.Id = @Id;";
+            string sql =
+            "SELECT c.ContinentId, c.Name AS ContinentName, c.Population AS ContinentPopulation, Country.CountryId, Country.Name AS Countryname," +
+            " Country.Population AS CountryPopulation, Country.Surface, Country.ContinentId, city.* FROM[dbo].[City] city" +
+            " INNER JOIN[dbo].[Country] Country ON city.CountryId = Country.CountryId" +
+            " INNER JOIN[dbo].[Continent] c ON Country.ContinentId = c.ContinentId" +
+            " WHERE Country.ContinentId = @ContinentId";
             SqlConnection connection = GetConnection();
             using SqlCommand command = new(sql, connection);
             List<City> cities = new();
@@ -255,19 +259,19 @@ namespace DataLaag.ADO
             try
             {
                 connection.Open();
-                command.Parameters.AddWithValue("@Id", landId);
+                command.Parameters.AddWithValue("@ContinentId", ContinentId);
                 IDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     if (continent == null)
                     {
-                        continent = new((int)reader["ContinentId"], (string)reader["ContinentNaam"], (int)reader["Bevolkingsaantal"]);
+                        continent = new((int)reader["ContinentId"], (string)reader["ContinentName"], (int)reader["ContinentPopulation"]);
                     }
                     if (country == null)
                     {
-                        country = new((int)reader["LandId"], (string)reader["LandNaam"], (int)reader["LandBevolkingsaantal"], (decimal)reader["Oppervlakte"], continent);
+                        country = new((int)reader["CountryId"], (string)reader["Countryname"], (int)reader["CountryPopulation"], (decimal)reader["Surface"], continent);
                     }
-                    City city = new((int)reader["Id"], (string)reader["Naam"], (int)reader["Bevolkingsaantal"], (bool)reader["IsHoofdstad"], country);
+                    City city = new((int)reader["CountryId"], (string)reader["Name"], (int)reader["Population"], (bool)reader["IsCapital"], country);
                     cities.Add(city);
                 }
                 reader.Close();
@@ -277,7 +281,7 @@ namespace DataLaag.ADO
                     {
                         totaalBevolking += stad.Population;
                     }
-                    if ((totaalBevolking + bevolkingsaantal) > country.Population)
+                    if (totaalBevolking != continent.Population)
                     {
                         return false;
                     }
@@ -296,20 +300,21 @@ namespace DataLaag.ADO
 
         public bool ZitStadInLandInContinent(int continentId, int countryId, int cityId)
         {
-            string sql = 
-                "SELECT COUNT(*) FROM [dbo].[City] c " +
-                "INNER JOIN [dbo].[Country] c ON s.LandId = c.Id " +
-                "INNER JOIN [dbo].[Continent] co ON c.ContinentId = co.Id " +
-                "WHERE co.Id = @ContinentId " +
-                "AND c.Id = @countryId AND s.Id = @cityId";
+            string sql =
+                "SELECT COUNT(*) FROM [dbo].[City] city " +
+                "INNER JOIN [dbo].[Country] Country ON city.CountryId = Country.CountryId " +
+                "INNER JOIN [dbo].[Continent] Continent ON Country.ContinentId = Continent.ContinentId " +
+                "WHERE Continent.ContinentId = @ContinentId " +
+                "AND Country.CountryId = @CountryId " +
+                "AND city.Id = @CityId";
             SqlConnection connection = GetConnection();
             using SqlCommand command = new(sql, connection);
             try
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@ContinentId", continentId);
-                command.Parameters.AddWithValue("@cityId", cityId);
-                command.Parameters.AddWithValue("@countryId", countryId);
+                command.Parameters.AddWithValue("@CityId", cityId);
+                command.Parameters.AddWithValue("@CountryId", countryId);
                 int n = (int)command.ExecuteScalar();
                 if (n > 0) return true;
                 return false;

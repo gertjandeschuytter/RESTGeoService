@@ -12,6 +12,7 @@ namespace ADOTestOmgeving
             var connectionString = ConfigurationManager.ConnectionStrings["GeoServiceDB"].ConnectionString;
             ContinentRepositoryADO continentADO = new(connectionString);
             CountryRepositoryADO countryADO = new(connectionString);
+            CityRepositoryADO cityADO = new(connectionString);
 
             //continentADO
 
@@ -34,7 +35,16 @@ namespace ADOTestOmgeving
             //bool zitlandinCon = countryADO.ZitLandInContinent(1, 2);
 
             //cityADO
-
+            //bool bestaatstad = cityADO.BestaatStad(1);
+            //bool controleercontinentlandstadbevolking = cityADO.ControleerBevolkingsaantal(1, 1000000);
+            //var steden = cityADO.GeefStedenLand(2);
+            //bool heefsteden = cityADO.HeeftSteden(2);
+            //var stadje = cityADO.StadWeergeven(1002);
+            //stadje.ZetBevolkingsaantal(50000);
+            //toevoegen werkt
+            //cityADO.StadVerwijderen(1004);
+            //cityADO.StadUpdaten(stadje);
+            //cityADO.ZitStadInLandInContinent(1003, 1003, 1005);
         }
     }
 }
