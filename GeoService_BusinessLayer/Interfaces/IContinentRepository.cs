@@ -12,7 +12,7 @@ namespace DomeinLaag.Interfaces
         Continent ContinentToevoegen(Continent continent);
         bool BestaatContinent(int continentId);
         bool BestaatContinent(string name);
-        Continent ContinentWeergeven(int continentId);
+        Continent ContinentWeergevenMetLanden(int continentId);
         void ContinentVerwijderen(int continentId);
         void ContinentUpdaten(Continent continent);
     }

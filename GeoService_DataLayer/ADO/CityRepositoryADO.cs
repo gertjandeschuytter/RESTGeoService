@@ -34,7 +34,7 @@ namespace DataLaag.ADO
         public List<City> GeefStedenLand(int countryId)
         {
             string sql =
-                "SELECT c.ContinentId, c.Name AS ContinentName, c.Population AS ContinentPopulation, Country.CountryId, Country.Name AS CountryName," +
+                "SELECT c.ContinentId, c.Name AS ContinentName, Country.CountryId, Country.Name AS CountryName," +
                 " Country.Population AS CountryPopulation, Country.Surface, Country.ContinentId, city.* FROM [dbo].[City] city " +
                 "INNER JOIN [dbo].[Country] Country ON city.CountryId = Country.CountryId " +
                 "INNER JOIN [dbo].[Continent] c ON Country.ContinentId = c.ContinentId " +
@@ -45,7 +45,7 @@ namespace DataLaag.ADO
             {
                 connection.Open();
                 Continent continent = null;
-                Country land = null;
+                Country country = null;
                 List<City> steden = new();
                 command.Parameters.AddWithValue("@countryId", countryId);
                 IDataReader reader = command.ExecuteReader();
@@ -53,13 +53,14 @@ namespace DataLaag.ADO
                 {
                     if (continent == null)
                     {
-                        continent = new((int)reader["ContinentId"], (string)reader["ContinentName"], (int)reader["ContinentPopulation"]);
+                        continent = new((string)reader["ContinentName"],(int)reader["ContinentId"]);
                     }
-                    if (land == null)
+                    if (country == null)
                     {
-                        land = new((int)reader["CountryId"], (string)reader["CountryName"], (int)reader["CountryPopulation"], (decimal)reader["Surface"], continent);
+                        country = new((int)reader["CountryId"], (string)reader["CountryName"], (int)reader["CountryPopulation"], (decimal)reader["Surface"], continent);
+                        continent.AddCountry(country);
                     }
-                    City stad = new((int)reader["Id"], (string)reader["Name"], (int)reader["Population"], (bool)reader["IsCapital"], land);
+                    City stad = new((int)reader["Id"], (string)reader["Name"], (int)reader["Population"], (bool)reader["IsCapital"], country);
                     steden.Add(stad);
                 }
                 reader.Close();
@@ -154,7 +155,7 @@ namespace DataLaag.ADO
         public City StadWeergeven(int cityId)
         {
             string sql =
-                "SELECT Continent.ContinentId, Continent.Name AS ContinentName, Continent.Population AS ContinentPopulation, Country.CountryId, Country.Name AS CountryName, " +
+                "SELECT Continent.ContinentId, Continent.Name AS ContinentName, Country.CountryId, Country.Name AS CountryName, " +
                 "Country.Population AS CountryPopulation, Country.Surface, Country.ContinentId, city.* FROM [dbo].[City] city " +
                 "INNER JOIN [dbo].[Country] Country ON city.CountryId = Country.CountryId " +
                 "INNER JOIN [dbo].[Continent] Continent ON Country.ContinentId = Continent.ContinentId " +
@@ -171,7 +172,7 @@ namespace DataLaag.ADO
                 reader.Read();
                 if (continent == null)
                 {
-                    continent = new((int)reader["ContinentId"], (string)reader["ContinentName"], (int)reader["ContinentPopulation"]);
+                    continent = new((string)reader["ContinentName"],(int)reader["ContinentId"]);
                 }
                 if (country == null)
                 {
@@ -245,7 +246,7 @@ namespace DataLaag.ADO
         public bool ControleerBevolkingsaantal(int ContinentId, int Population)
         {
             string sql =
-            "SELECT c.ContinentId, c.Name AS ContinentName, c.Population AS ContinentPopulation, Country.CountryId, Country.Name AS Countryname," +
+            "SELECT c.ContinentId, c.Name AS ContinentName, Country.CountryId, Country.Name AS Countryname," +
             " Country.Population AS CountryPopulation, Country.Surface, Country.ContinentId, city.* FROM[dbo].[City] city" +
             " INNER JOIN[dbo].[Country] Country ON city.CountryId = Country.CountryId" +
             " INNER JOIN[dbo].[Continent] c ON Country.ContinentId = c.ContinentId" +
@@ -265,7 +266,7 @@ namespace DataLaag.ADO
                 {
                     if (continent == null)
                     {
-                        continent = new((int)reader["ContinentId"], (string)reader["ContinentName"], (int)reader["ContinentPopulation"]);
+                        continent = new((string)reader["ContinentName"],(int)reader["ContinentId"]);
                     }
                     if (country == null)
                     {
@@ -281,7 +282,7 @@ namespace DataLaag.ADO
                     {
                         totaalBevolking += stad.Population;
                     }
-                    if (totaalBevolking != continent.Population)
+                    if ((totaalBevolking + Population ) > country.Population)
                     {
                         return false;
                     }

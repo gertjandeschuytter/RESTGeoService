@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31829.152
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoService_BusinessLayer", "GeoService_BusinessLayer\GeoService_BusinessLayer.csproj", "{EA240B01-60A9-45BF-80BE-A7526BC86B40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoService_BusinessLayer", "GeoService_BusinessLayer\GeoService_BusinessLayer.csproj", "{EA240B01-60A9-45BF-80BE-A7526BC86B40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoService_DataLayer", "GeoService_DataLayer\GeoService_DataLayer.csproj", "{3C32D2C5-10FE-4E0B-9E30-492FC6B4217D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoService_DataLayer", "GeoService_DataLayer\GeoService_DataLayer.csproj", "{3C32D2C5-10FE-4E0B-9E30-492FC6B4217D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADOTestOmgeving", "ADOTestOmgeving\ADOTestOmgeving.csproj", "{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADOTestOmgeving", "ADOTestOmgeving\ADOTestOmgeving.csproj", "{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Businesslayer_Tests", "Businesslayer_Tests\Businesslayer_Tests.csproj", "{F22B2BA5-35DF-4ABE-BE35-3B4AB7B272B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoService_RESTLayer", "GeoService_RESTLayer\GeoService_RESTLayer.csproj", "{E45A379F-A91E-45ED-B202-DCFB2137766A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F22B2BA5-35DF-4ABE-BE35-3B4AB7B272B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F22B2BA5-35DF-4ABE-BE35-3B4AB7B272B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F22B2BA5-35DF-4ABE-BE35-3B4AB7B272B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F22B2BA5-35DF-4ABE-BE35-3B4AB7B272B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E45A379F-A91E-45ED-B202-DCFB2137766A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E45A379F-A91E-45ED-B202-DCFB2137766A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E45A379F-A91E-45ED-B202-DCFB2137766A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E45A379F-A91E-45ED-B202-DCFB2137766A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,10 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLaag.ADO
-{
-    public class CountryRepositoryADO : ICountryRepository
-    {
+namespace DataLaag.ADO {
+    public class CountryRepositoryADO : ICountryRepository {
         #region Properties
         private readonly string _connectionString;
         #endregion
@@ -51,7 +49,7 @@ namespace DataLaag.ADO
                     //zolang hij de naam nogn iet heeft
                     if (continent == null)
                     {
-                        continent = new((int)reader["ContinentId"], (string)reader["ContinentName"], (int)reader["ContinentPopulation"]);
+                        continent = new((string)reader["ContinentName"], (int)reader["ContinentId"]);
                     }
                     Country country = new((int)reader["CountryId"], (string)reader["Name"], (int)reader["Population"], (decimal)reader["Surface"], continent);
                     countries.Add(country);
@@ -146,8 +144,8 @@ namespace DataLaag.ADO
 
         public Country LandWeergeven(int countryId)
         {
-            string sql = 
-                "SELECT c.*, co.ContinentId, co.Name AS ContinentName, co.Population AS ContinentPopulation FROM[dbo].[Country] c" +
+            string sql =
+                "SELECT c.*, co.ContinentId, co.Name AS ContinentName FROM[dbo].[Country] c" +
                 " INNER JOIN[dbo].[Continent] co ON c.ContinentId = co.ContinentId" +
                 " WHERE c.CountryId = @CountryId";
             SqlConnection connection = GetConnection();
@@ -158,10 +156,11 @@ namespace DataLaag.ADO
                 command.Parameters.AddWithValue("@CountryId", countryId);
                 IDataReader reader = command.ExecuteReader();
                 reader.Read();
-                Continent continent = new((int)reader["ContinentId"], (string)reader["ContinentName"], (int)reader["ContinentPopulation"]);
-                Country land = new(countryId, (string)reader["Name"], (int)reader["Population"], (decimal)reader["Surface"], continent);
+                Continent continent = new((string)reader["ContinentName"], (int)reader["ContinentId"]);
+                Country country = new(countryId, (string)reader["Name"], (int)reader["Population"], (decimal)reader["Surface"], continent);
+                continent.AddCountry(country);
                 reader.Close();
-                return land;
+                return country;
             }
             catch (Exception ex)
             {
@@ -196,31 +195,33 @@ namespace DataLaag.ADO
 
         public Country LandUpdaten(Country country)
         {
-            string sql = "UPDATE [dbo].[Country] SET Name = @Name, Surface = @Surface, ContinentId = @ContinentId, Population = @Population WHERE CountryId = @CountryId";
+            //Country countryDB = LandWeergeven(country.Id);
+            string sqlupdateBasics = "UPDATE [dbo].[Country] SET Name = @Name, Surface = @Surface, Population = @Population, ContinentId =@ContinentId WHERE CountryId = @CountryId";
             SqlConnection connection = GetConnection();
-            using SqlCommand command = new(sql, connection);
-            connection.Open();
-            SqlTransaction sqlTransaction = connection.BeginTransaction();
-            try
             {
-                command.Transaction = sqlTransaction;
-                command.Parameters.AddWithValue("@CountryId", country.Id);
-                command.Parameters.AddWithValue("@Name", country.Name);
-                command.Parameters.AddWithValue("@Surface", country.Surface);
-                command.Parameters.AddWithValue("@ContinentId", country.Continent.Id);
-                command.Parameters.AddWithValue("@Population", country.Population);
-                command.ExecuteNonQuery();
-                sqlTransaction.Commit();
-                return country;
-            }
-            catch (Exception ex)
-            {
-                sqlTransaction.Rollback();
-                throw new CountryRepositoryADOException("LandUpdatenADO - error", ex);
-            }
-            finally
-            {
-                connection.Close();
+                using (SqlCommand command = connection.CreateCommand())
+                {
+                    connection.Open();
+                    try
+                    {
+                        command.Parameters.AddWithValue("@Name", country.Name);
+                        command.Parameters.AddWithValue("@Surface", country.Surface);
+                        command.Parameters.AddWithValue("@Population", country.Population);
+                        command.Parameters.AddWithValue("@ContinentId", country.Continent.Id);
+                        command.Parameters.AddWithValue("@CountryId", country.Id);
+                        command.CommandText = sqlupdateBasics;
+                        command.ExecuteNonQuery();
+                        return country;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new CountryRepositoryADOException("Kon niet upgedate worden" + ex.Message);
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
             }
         }
 

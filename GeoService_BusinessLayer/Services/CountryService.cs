@@ -53,7 +53,7 @@ namespace DomeinLaag.Services
             {
                 if (_repository.BestaatLand(country.Name, country.Continent.Id))
                 {
-                    throw new CountryServiceException("Land bestaat al.");
+                    throw new CountryServiceException("Land bestaat al in dat continent.");
                 }
                 return _repository.LandToevoegen(country);
             }
@@ -106,6 +106,10 @@ namespace DomeinLaag.Services
                 if (!_repository.BestaatLand(country.Id))
                 {
                     throw new CountryServiceException("Land bestaat niet.");
+                }
+                if (country == _repository.LandWeergeven(country.Id))
+                {
+                    throw new CountryServiceException("Landen zijn gelijk aan elkaar, deze update heeft geen enkel nut");
                 }
                 return _repository.LandUpdaten(country);
             }

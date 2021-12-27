@@ -45,6 +45,7 @@ namespace ADOTestOmgeving
             //cityADO.StadVerwijderen(1004);
             //cityADO.StadUpdaten(stadje);
             //cityADO.ZitStadInLandInContinent(1003, 1003, 1005);
+            //continentADO.ContinentWeergeven(1);
         }
     }
 }

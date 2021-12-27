@@ -13,6 +13,7 @@ namespace GeoService_BusinessLayer.Models {
         public int Population { get; private set; }
         public decimal Surface { get; private set; }
         public Continent Continent { get; private set; }
+        private List<River> Rivers { get; set; } = new List<River>();
 
         public Country(int id, string name, int population, decimal surface, Continent continent) : this(name, population, surface, continent)
         {
@@ -25,6 +26,15 @@ namespace GeoService_BusinessLayer.Models {
             ZetBevolkingsaantal(population);
             ZetOppervlakte(surface);
             ZetContinent(continent);
+        }
+        public void AddRiver(River river)
+        {
+            Rivers.Add(river);
+        }
+
+        public void RemoveRiver(River river)
+        {
+            Rivers.Remove(river);
         }
 
         public void ZetId(int id)

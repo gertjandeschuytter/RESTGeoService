@@ -7,10 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DomeinLaag.Services
-{
-    public class ContinentService
-    {
+namespace DomeinLaag.Services {
+    public class ContinentService {
         #region Properties
         private readonly IContinentRepository _repository;
         #endregion
@@ -71,7 +69,7 @@ namespace DomeinLaag.Services
                 {
                     throw new ContinentServiceException("Continent bestaat niet met deze id.");
                 }
-                return _repository.ContinentWeergeven(continentId);
+                return _repository.ContinentWeergevenMetLanden(continentId);
             }
             catch (Exception ex)
             {
@@ -83,15 +81,23 @@ namespace DomeinLaag.Services
         {
             try
             {
-                if (!_repository.BestaatContinent(continentId))
+                if (_repository.BestaatContinent(continentId))
                 {
-                    throw new ContinentServiceException("Continent bestaat niet met deze id.");
+                    var continentdb = _repository.ContinentWeergevenMetLanden(continentId);
+                    if (continentdb.GetCountries().Count != 0)
+                    {
+                        throw new ContinentServiceException("Continent bevat nog landen kan niet verwijderd worden");
+                    }
+                    _repository.ContinentVerwijderen(continentId);
                 }
-                _repository.ContinentVerwijderen(continentId);
+                else
+                {
+                    throw new ContinentServiceException("Opgevraagde continent bestaat niet");
+                }
             }
             catch (Exception ex)
             {
-                throw new ContinentServiceException("ContinentVerwijderen - error", ex);
+                throw new ContinentServiceException("ContinentVerwijderen - error - " + ex.Message);
             }
         }
 
@@ -103,7 +109,7 @@ namespace DomeinLaag.Services
             }
             if (!_repository.BestaatContinent(continent.Id))
             {
-                throw new ContinentServiceException("Klant bestaat niet.");
+                throw new ContinentServiceException("Continent bestaat niet.");
             }
             Continent continentDb = ContinentWeergeven(continent.Id);
             if (continentDb == continent)

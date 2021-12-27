@@ -9,10 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLaag.ADO
-{
-    public class ContinentRepositoryADO : IContinentRepository
-    {
+namespace DataLaag.ADO {
+    public class ContinentRepositoryADO : IContinentRepository {
         #region Properties
         private readonly string _connectionString;
         #endregion
@@ -33,7 +31,7 @@ namespace DataLaag.ADO
 
         public Continent ContinentToevoegen(Continent continent)
         {
-            string sql = "INSERT INTO [dbo].[Continent] (Name, Population) OUTPUT Inserted.ContinentId VALUES (@Name, @Population)";
+            string sql = "INSERT INTO [dbo].[Continent] (Name) OUTPUT Inserted.ContinentId VALUES (@Name)";
             SqlConnection connection = GetConnection();
             using SqlCommand command = new(sql, connection);
             connection.Open();
@@ -42,7 +40,6 @@ namespace DataLaag.ADO
             {
                 command.Transaction = sqlTransaction;
                 command.Parameters.AddWithValue("@Name", continent.Name);
-                command.Parameters.AddWithValue("@Population", continent.Population);
                 int id = (int)command.ExecuteScalar();
                 continent.ZetId(id);
                 sqlTransaction.Commit();
@@ -108,7 +105,55 @@ namespace DataLaag.ADO
             }
         }
 
-        public Continent ContinentWeergeven(int continentId)
+        public Continent ContinentWeergevenMetLanden(int continentId)
+        {
+            Continent continent = null;
+            Country country = null;
+            string sql =
+                "SELECT Continent.*, Country.CountryId, Country.Name AS CountryName, Country.Population as CountryPopulation, Country.Surface FROM [dbo].[Continent] Continent" +
+                " INNER JOIN[dbo].[Country] Country ON Country.ContinentId = Continent.ContinentId" +
+                " WHERE Continent.ContinentId = @ContinentId";
+            SqlConnection connection = GetConnection();
+            using SqlCommand command = new(sql, connection);
+            try
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@ContinentId", continentId);
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["ContinentId"] != DBNull.Value)
+                        {
+                            if (continent == null)
+                            {
+                                continent = new((string)reader["Name"], (int)reader["ContinentId"]);
+                            }
+                            country = new((string)reader["CountryName"], (int)reader["CountryPopulation"], (decimal)reader["Surface"], continent);
+                            country.ZetId((int)reader["CountryId"]);
+                            continent.AddCountry(country);
+                        }
+                    }
+                    reader.Close();
+                }
+                else
+                {
+                    continent = ContinentWeergeven(continentId);
+                }
+                return continent;
+            }
+            catch (Exception ex)
+            {
+                throw new ContinentRepositoryADOException("ContinentWeergevenADO - error", ex);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        private Continent ContinentWeergeven(int continentId)
         {
             Continent continent = null;
             string sql = "SELECT * FROM [dbo].[Continent] WHERE ContinentId = @ContinentId";
@@ -121,7 +166,7 @@ namespace DataLaag.ADO
                 IDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    continent = new((int)reader["ContinentId"], (string)reader["Name"], (int)reader["Population"]);
+                    continent = new((string)reader["Name"],(int)reader["ContinentId"]);
                 }
                 reader.Close();
                 return continent;

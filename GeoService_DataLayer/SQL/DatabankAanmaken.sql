@@ -1,4 +1,17 @@
-﻿CREATE TABLE [dbo].[Continent] (
+﻿CREATE TABLE [dbo].[River] (
+	[RiverId] INT IDENTITY (1, 1) NOT NULL,
+	[Name] NVARCHAR(MAX) NOT NULL,
+	[Length] INT NOT NULL
+    PRIMARY KEY CLUSTERED ([RiverId] ASC),
+);
+CREATE TABLE [dbo].[CountryRiver] (
+    [CountryId] INT NOT NULL,
+	[RiverId] INT NOT NULL,
+    PRIMARY KEY CLUSTERED ([CountryId] ASC,[RiverId] ASC),
+    CONSTRAINT [FK_Country_Country] FOREIGN KEY ([CountryId]) REFERENCES [dbo].[Country] ([CountryId]),
+	CONSTRAINT [FK_River_River] FOREIGN KEY ([RiverId]) REFERENCES [dbo].[River] ([RiverId])
+);
+CREATE TABLE [dbo].[Continent] (
     [ContinentId]               INT            IDENTITY (1, 1) NOT NULL,
     [Name]             NVARCHAR (100) NOT NULL,
     [Population] INT            NOT NULL,
