@@ -413,6 +413,7 @@ namespace GeoService_RESTLayer.Controllers {
             }
             catch (Exception ex)
             {
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: GETRiver - kon niet worden aangemaakt " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -429,7 +430,7 @@ namespace GeoService_RESTLayer.Controllers {
             }
             catch (Exception ex)
             {
-                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: POST Continent - kon niet worden aangemaakt " + ex.Message);
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: POSTRiver - kon niet worden aangemaakt " + ex.Message);
                 return BadRequest(ex);
             }
         }
@@ -441,31 +442,41 @@ namespace GeoService_RESTLayer.Controllers {
             try
             {
                 riverService.RivierVerwijderen(riverId);
-                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: Continent was succesfully removed");
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: River {riverId} was succesfully removed");
                 return NoContent();
             }
-            catch (Exception) { return BadRequest(); }
+            catch (Exception ex) {
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: DELETERiver failed " + ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
-        //[HttpPut]
-        //[Route("{id}")]
-        //public ActionResult<RiverDTOutput> PutRiver(int id, [FromBody] RiverDTOInput river)
-        //{
-        //    Logger.LogInformation("PutRiver called");
-        //    if (river == null || river.RiverId != id)
-        //    {
-        //        return BadRequest("The id for the river was not in good condition");
-        //    }
-        //    else
-        //    {
-        //        try
-        //        {
-        //            return CreatedAtAction(nameof(PutRiver), ApiComplete.UpdateRiver(river));
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return BadRequest(ex.Message);
-        //        }
-        //    }
-        //}
+        [HttpPut]
+        [Route("River/{riverId}")]
+        public ActionResult<RiverRESTOutputDTO> PutRiver(int riverId, [FromBody] RiverRESTInputDTO dtoObject)
+        {
+            try
+            {
+                if (dtoObject == null)
+                {
+                    _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: The given paramaters are considered to be null.");
+                    return BadRequest($"The given paramaters are considered to be null.");
+                }
+                if (dtoObject.RiverId != riverId)
+                {
+                    _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: The Id does not match the Id in the paramaters.");
+                    return BadRequest($"The Id does not match the Id in the paramaters.");
+                }
+                River river = MapToDomain.MapToRiverDomain(dtoObject,countryService);
+                river.ZetId(riverId);
+                riverService.UpdateRiver(river);
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  PutContinent was succesful.");
+                return CreatedAtAction(nameof(GetRiver), new { riverId = river.Id }, MapFromDomain.MapFromRiverDomain(url, river, riverService));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

@@ -176,10 +176,87 @@ namespace GeoService_DataLayer.ADO {
                 }
             }
         }
-
         public void RivierVerwijderen(int riverId)
         {
+            string sql = "DELETE FROM [dbo].[CountryRiver] WHERE RiverId = @riverId";
+            string sql2 = "DELETE FROM [dbo].[River] WHERE RiverId = @RiverId";
+            SqlConnection conn = GetConnection();
+            using (SqlCommand cmd1 = conn.CreateCommand())
+            using (SqlCommand cmd2 = conn.CreateCommand())
+            {
+                conn.Open();
+                SqlTransaction sqltr = conn.BeginTransaction();
+                cmd1.Transaction = sqltr;
+                cmd2.Transaction = sqltr;
+                try
+                {
+                    cmd1.CommandText = sql;
+                    cmd2.CommandText = sql2;
+                    cmd1.Parameters.AddWithValue("@riverId", riverId);
+                    cmd1.ExecuteNonQuery();
+                    cmd2.Parameters.AddWithValue("@RiverId", riverId);
+                    cmd2.ExecuteNonQuery();
+                    sqltr.Commit();
+                }
+                catch (Exception ex)
+                {
+                    sqltr.Rollback();
+                    throw new RiverRepositoryADOException("RiverVerwijderene - ", ex);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
 
+        public void RivierUpdaten(River river)
+        {
+            var landen = river.GetCountries();
+            string sqlOne = "UPDATE [dbo].[River] SET Name = @Name, Length = @Length WHERE RiverId = @RiverId";
+            string sqlTwo = "INSERT INTO [dbo].[CountryRiver] (CountryId, RiverId) VALUES(@CountryId, @RiverId)";
+            string sqlThree = "DELETE FROM [dbo].[CountryRiver] WHERE RiverId = @RiverId";
+
+
+            SqlConnection conn = GetConnection();
+            SqlCommand cmdOne = new(sqlOne, conn);
+            SqlCommand cmdThree = new(sqlThree, conn);
+
+            conn.Open();
+            SqlTransaction sqltr = conn.BeginTransaction();
+            cmdOne.Transaction = sqltr;
+            cmdThree.Transaction = sqltr;
+
+            try
+            {
+                cmdOne.Parameters.AddWithValue("@Name", river.Name);
+                cmdOne.Parameters.AddWithValue("@Length", river.Length);
+                cmdOne.Parameters.AddWithValue("@RiverId", river.Id);
+                cmdOne.ExecuteNonQuery();
+                cmdThree.Parameters.AddWithValue("@RiverId", river.Id);
+                cmdThree.ExecuteNonQuery();
+                foreach (var l in landen)
+                {
+                    SqlCommand cmdTwo = new(sqlTwo, conn);
+                    cmdTwo.Parameters.Clear();
+                    cmdTwo.Transaction = sqltr;
+                    cmdTwo.Parameters.AddWithValue("@CountryId", l.Id);
+                    cmdTwo.Parameters.AddWithValue("@RiverId", river.Id);
+                    cmdTwo.ExecuteNonQuery();
+                }
+
+                sqltr.Commit();
+
+            }
+            catch (Exception ex)
+            {
+                sqltr.Rollback();
+                throw new RiverRepositoryADOException("UpdateRivier - " + ex.Message);
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
     }
 }

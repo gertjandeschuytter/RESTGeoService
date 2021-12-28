@@ -13,5 +13,6 @@ namespace GeoService_BusinessLayer.Interfaces {
         bool BestaatRivier(string name);
         River RivierToevoegen(River river);
         void RivierVerwijderen(int riverId);
+        void RivierUpdaten(River river);
     }
 }

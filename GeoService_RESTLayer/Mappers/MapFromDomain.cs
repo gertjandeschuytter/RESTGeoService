@@ -74,13 +74,7 @@ namespace GeoService_RESTLayer.Mappers {
             try
             {
                 string riverURL = $"{url}/api/River/{river.Id}";
-                List<Country> ListCountries = null;
-                //bij een post zijn ze al meegegeven dus onnodig om nog eens te vragen
-                if (river.GetCountries().Count < 0)
-                {
-                    //WHEN GETRiver
-                    ListCountries = riverService.geefLandenRivier(river.Id);
-                }
+                List<Country> ListCountries = riverService.geefLandenRivier(river.Id);
                 List<string> countries = new();
                 foreach (var item in ListCountries)
                 {

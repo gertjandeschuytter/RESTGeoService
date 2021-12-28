@@ -17,12 +17,14 @@ namespace GeoService_BusinessLayer.Models {
 
         public void SetCountries(List<Country> countries)
         {
-            if (countries == null || countries.Count < 1)
-                throw new RiverException("River: River must belong to at least one country");
+            if (countries == null) throw new RiverException("River: List of countries is null");
+            if (countries.Count < 1) throw new RiverException("River: River must belong to at least one country");
             else
             {
+                //als er dubbels in zitten dan is het niet gelijk, zie distinct methode
                 if (countries.Count == countries.Distinct().Count())
                 {
+                    //verwijder de rivier van elk land
                     foreach (Country cr in CountriesWhereRiver)
                     {
                         cr.RemoveRiver(this);
@@ -34,7 +36,7 @@ namespace GeoService_BusinessLayer.Models {
                         r.AddRiver(this);
                     }
                 }
-                else throw new RiverException("River: The list of countries contained doubles");
+                else throw new RiverException("River: The list of countries contains atleast one or more times the same value");
             }
         }
         public IReadOnlyList<Country> GetCountries()
