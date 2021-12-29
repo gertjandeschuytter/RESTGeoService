@@ -9,34 +9,23 @@ namespace GeoService_BusinessLayer.Models {
     public class River {
         public River(string name, int length)
         {
-            Name = name;
-            Length = length;
+            ZetNaam(name);
+            ZetLengte(length);
         }
-
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+        public int Length { get; private set; }
         private List<Country> CountriesWhereRiver { get; set; } = new List<Country>();
 
         public void SetCountries(List<Country> countries)
         {
             if (countries == null) throw new RiverException("River: List of countries is null");
             if (countries.Count < 1) throw new RiverException("River: River must belong to at least one country");
-            else
+            if (countries.Count != countries.Distinct().Count()) throw new RiverException("River: The list of countries contains atleast one or more times the same value");
+            foreach (Country c in countries)
             {
-                //als er dubbels in zitten dan is het niet gelijk, zie distinct methode
-                if (countries.Count == countries.Distinct().Count())
-                {
-                    //verwijder de rivier van elk land
-                    foreach (Country cr in CountriesWhereRiver)
-                    {
-                        cr.RemoveRiver(this);
-                    }
-                    CountriesWhereRiver = new List<Country>();
-                    foreach (Country r in countries)
-                    {
-                        CountriesWhereRiver.Add(r);
-                        r.AddRiver(this);
-                    }
-                }
-                else throw new RiverException("River: The list of countries contains atleast one or more times the same value");
+                CountriesWhereRiver.Add(c);
+                c.AddRiver(this);
             }
         }
         public IReadOnlyList<Country> GetCountries()
@@ -44,36 +33,21 @@ namespace GeoService_BusinessLayer.Models {
             return CountriesWhereRiver.AsReadOnly();
         }
 
-        public int Id { get; set; }
-
+        //setters
         public void ZetId(int id)
         {
-            if (id <= 0) throw new ContinentException("Id moet groter zijn dan 0.");
+            if (id <= 0) throw new RiverException("Id moet groter zijn dan 0.");
             Id = id;
         }
-
-        private string _Name;
-        public string Name
+        public void ZetNaam(string name)
         {
-            get { return _Name; }
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new RiverException("River: A ruver's name can not be null or empty");
-                else _Name = value;
-            }
+            if (string.IsNullOrWhiteSpace(name)) throw new RiverException("Id moet groter zijn dan 0.");
+            Name = name;
         }
-
-        private int _Length;
-        public int Length
+        public void ZetLengte(int length)
         {
-            get { return _Length; }
-            set
-            {
-                if (value < 1)
-                    throw new RiverException("River: A river's length must be longer than 0");
-                else _Length = value;
-            }
+            if (length < 1) throw new RiverException("River: A river's length must be longer than 0");
+            Length = length;
         }
     }
 }

@@ -31,10 +31,9 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CityServiceException("GeefLandenContinent - error", ex);
+                throw new CityServiceException("GeefStedenLand - error - " +  ex.Message);
             }
         }
-
         public bool HeeftSteden(int countryId)
         {
             try
@@ -43,10 +42,9 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CityServiceException("HeeftSteden - error", ex);
+                throw new CityServiceException("HeeftSteden - error - " + ex.Message);
             }
         }
-
         public City StadToevoegen(City city)
         {
             try
@@ -59,10 +57,9 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CityServiceException("StadToevoegen - error", ex);
+                throw new CityServiceException("StadToevoegen - error - " + ex.Message);
             }
         }
-
         public City StadWeergeven(int cityId)
         {
             try
@@ -75,10 +72,9 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CityServiceException("StadWeergeven - error", ex);
+                throw new CityServiceException("StadWeergeven - error - " + ex.Message);
             }
         }
-
         public bool BestaatStad(int cityId)
         {
             try
@@ -87,10 +83,9 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CityServiceException("BestaatStad - error", ex);
+                throw new CityServiceException("BestaatStad - error - " + ex.Message);
             }
         }
-
         public void StadVerwijderen(int cityId)
         {
             try
@@ -103,10 +98,9 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CityServiceException("StadVerwijderen - error", ex);
+                throw new CityServiceException("StadVerwijderen - error - " + ex.Message);
             }
         }
-
         public City StadUpdaten(City city)
         {
             try
@@ -119,10 +113,9 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CityServiceException("StadUpdaten - error", ex);
+                throw new CityServiceException("StadUpdaten - error - " + ex.Message);
             }
         }
-
         public bool ControleerBevolkingsaantal(int countryId, int population)
         {
             try
@@ -131,10 +124,9 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CityServiceException("ControleerBevolkingsaantal - error", ex);
+                throw new CityServiceException("ControleerBevolkingsaantal - error - " + ex.Message);
             }
         }
-
         public bool ZitStadInLandInContinent(int continentId, int countryId, int cityId)
         {
             try
@@ -143,7 +135,7 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CityServiceException("ZitStadInLandInContinent - error", ex);
+                throw new CityServiceException("ZitStadInLandInContinent - error - " + ex.Message);
             }
         }
         #endregion

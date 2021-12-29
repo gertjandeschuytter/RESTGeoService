@@ -13,7 +13,8 @@ namespace GeoService_BusinessLayer.Models {
         public int Population { get; private set; }
         public decimal Surface { get; private set; }
         public Continent Continent { get; private set; }
-        private List<River> Rivers { get; set; } = new List<River>();
+        private List<River> Rivers { get; set; } 
+        //checken of dit werkt bij het finaliseren
 
         public Country(int id, string name, int population, decimal surface, Continent continent) : this(name, population, surface, continent)
         {
@@ -27,16 +28,13 @@ namespace GeoService_BusinessLayer.Models {
             ZetOppervlakte(surface);
             ZetContinent(continent);
         }
+
         public void AddRiver(River river)
         {
+            Rivers = new List<River>();
             Rivers.Add(river);
         }
-
-        public void RemoveRiver(River river)
-        {
-            Rivers.Remove(river);
-        }
-
+        //setters
         public void ZetId(int id)
         {
             if (id <= 0)
@@ -45,7 +43,6 @@ namespace GeoService_BusinessLayer.Models {
             }
             Id = id;
         }
-
         public void ZetNaam(string naam)
         {
             if (string.IsNullOrWhiteSpace(naam))
@@ -54,7 +51,6 @@ namespace GeoService_BusinessLayer.Models {
             }
             Name = naam;
         }
-
         public void ZetBevolkingsaantal(int bevolkingsaantal)
         {
             if (bevolkingsaantal <= 0)
@@ -63,7 +59,6 @@ namespace GeoService_BusinessLayer.Models {
             }
             Population = bevolkingsaantal;
         }
-
         public void ZetOppervlakte(decimal oppervlakte)
         {
             if (oppervlakte <= 0)
@@ -72,7 +67,6 @@ namespace GeoService_BusinessLayer.Models {
             }
             Surface = oppervlakte;
         }
-
         public void ZetContinent(Continent continent)
         {
             if (continent == null)
@@ -81,5 +75,11 @@ namespace GeoService_BusinessLayer.Models {
             }
             Continent = continent;
         }
+
+        //extra
+        //public void RemoveRiver(River river)
+        //{
+        //    Rivers.Remove(river);
+        //}
     }
 }

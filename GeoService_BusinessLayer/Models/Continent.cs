@@ -39,12 +39,7 @@ namespace GeoService_BusinessLayer.Models {
             }
             _countries.Add(country);
         }
-        public void RemoveCountry(Country country)
-        {
-            if (_countries.Contains(country))
-                _countries.Remove(country);
-            else throw new ContinentException("Continent: the givzn country is not part of the continent that was given!");
-        }
+        //setters
         public void ZetId(int id)
         {
             if (id <= 0) throw new ContinentException("Id moet groter zijn dan 0.");
@@ -63,9 +58,17 @@ namespace GeoService_BusinessLayer.Models {
             }
             Population = population;
         }
-        public int GetPopulation()
-        {
-            return Population;
-        }
+        //extra
+        //public int GetPopulation()
+        //{
+        //    return Population;
+        //}
+
+        //public void RemoveCountry(Country country)
+        //{
+        //    if (_countries.Contains(country))
+        //        _countries.Remove(country);
+        //    else throw new ContinentException("Continent: the givzn country is not part of the continent that was given!");
+        //}
     }
 }

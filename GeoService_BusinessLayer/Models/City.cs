@@ -28,6 +28,8 @@ namespace GeoService_BusinessLayer.Models {
             ZetIsHoofdstad(isCapital);
             ZetLand(country);
         }
+
+        //setters
         public void ZetId(int id)
         {
             if (id <= 0)

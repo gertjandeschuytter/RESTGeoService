@@ -47,6 +47,10 @@ namespace GeoService_RESTLayer.Mappers {
         {
             try
             {
+                if (dto == null)
+                {
+                    throw new MapToDomainException("meegegeven object is null");
+                }
                 Continent continent = continentService.ContinentWeergeven(dto.ContinentId);
                 Country country = countryService.LandWeergeven(dto.CountryId);
                 City city = new(dto.Name, dto.Population, dto.IsCapital, country);
@@ -62,6 +66,10 @@ namespace GeoService_RESTLayer.Mappers {
         {
             try
             {
+                if (dto == null)
+                {
+                    throw new MapToDomainException("meegegeven object is null");
+                }
                 River river = new(dto.Name, dto.Length);
                 List<Country> countries = new List<Country>();
                 foreach (var item in dto.CountryIds)
