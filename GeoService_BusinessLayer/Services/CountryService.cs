@@ -31,7 +31,7 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CountryServiceException("GeefLandenContinent - error", ex);
+                throw new CountryServiceException("GeefLandenContinent - error - "+ ex.Message);
             }
         }
 
@@ -43,7 +43,7 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CountryServiceException("HeeftLanden - error", ex);
+                throw new CountryServiceException("HeeftLanden - error - "+ ex.Message);
             }
         }
 
@@ -59,7 +59,7 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CountryServiceException("LandToevoegen - error", ex);
+                throw new CountryServiceException("LandToevoegen - error - " + ex.Message);
             }
         }
 
@@ -75,7 +75,7 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CountryServiceException("LandWeergeven - error", ex);
+                throw new CountryServiceException("LandWeergeven - error - "+ ex.Message);
             }
         }
 
@@ -91,7 +91,7 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CountryServiceException("LandVerwijderen - error", ex);
+                throw new CountryServiceException("LandVerwijderen - error - "+ ex.Message);
             }
         }
 
@@ -115,7 +115,7 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CountryServiceException("LandUpdaten - error", ex);
+                throw new CountryServiceException("LandUpdaten - error - "+ ex.Message);
             }
         }
 
@@ -127,7 +127,7 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CountryServiceException("BestaatLand - error", ex);
+                throw new CountryServiceException("BestaatLand - error - "+ ex.Message);
             }
         }
 
@@ -139,7 +139,7 @@ namespace DomeinLaag.Services
             }
             catch (Exception ex)
             {
-                throw new CountryServiceException("ZitLandInContinent - error", ex);
+                throw new CountryServiceException("ZitLandInContinent - error - " + ex.Message);
             }
         }
         #endregion

@@ -15,6 +15,10 @@ namespace GeoService_RESTLayer.Mappers {
         {
             try
             {
+                if (dtoObject == null)
+                {
+                    throw new MapToDomainException("meegegeven object is null");
+                }
                 Continent continent = new(dtoObject.Name);
                 return continent;
             }

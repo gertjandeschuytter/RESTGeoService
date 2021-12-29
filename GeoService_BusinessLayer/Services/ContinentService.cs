@@ -57,7 +57,7 @@ namespace DomeinLaag.Services {
             }
             catch (Exception ex)
             {
-                throw new ContinentServiceException("ContinentToevoegen - error", ex);
+                throw new ContinentServiceException("ContinentToevoegen - error" + ex.Message);
             }
         }
 
@@ -73,7 +73,7 @@ namespace DomeinLaag.Services {
             }
             catch (Exception ex)
             {
-                throw new ContinentServiceException("ContinentWeergeven - error", ex);
+                throw new ContinentServiceException("ContinentWeergeven - error - " + ex.Message);
             }
         }
 
@@ -92,7 +92,7 @@ namespace DomeinLaag.Services {
                 }
                 else
                 {
-                    throw new ContinentServiceException("Opgevraagde continent bestaat niet");
+                    throw new ContinentServiceException("Continent bestaat niet met deze id.");
                 }
             }
             catch (Exception ex)
@@ -103,21 +103,28 @@ namespace DomeinLaag.Services {
 
         public Continent ContinentUpdaten(Continent continent)
         {
-            if (continent == null)
+            try
             {
-                throw new ContinentServiceException("Continent is null.");
+                if (continent == null)
+                {
+                    throw new ContinentServiceException("Continent is null.");
+                }
+                if (!_repository.BestaatContinent(continent.Id))
+                {
+                    throw new ContinentServiceException("Continent bestaat niet.");
+                }
+                Continent continentDb = ContinentWeergeven(continent.Id);
+                if (continentDb == continent)
+                {
+                    throw new ContinentServiceException("Er zijn geen verschillen met het origineel.");
+                }
+                _repository.ContinentUpdaten(continent);
+                return continent;
             }
-            if (!_repository.BestaatContinent(continent.Id))
+            catch (Exception ex)
             {
-                throw new ContinentServiceException("Continent bestaat niet.");
+                throw new ContinentServiceException("ContinentUpdaten - error - " + ex.Message);
             }
-            Continent continentDb = ContinentWeergeven(continent.Id);
-            if (continentDb == continent)
-            {
-                throw new ContinentServiceException("Er zijn geen verschillen met het origineel.");
-            }
-            _repository.ContinentUpdaten(continent);
-            return continent;
         }
         #endregion
     }

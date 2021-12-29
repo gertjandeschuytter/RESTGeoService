@@ -14,5 +14,6 @@ namespace GeoService_BusinessLayer.Interfaces {
         River RivierToevoegen(River river);
         void RivierVerwijderen(int riverId);
         void RivierUpdaten(River river);
+        List<River> geefRivierenLand(int countryId);
     }
 }

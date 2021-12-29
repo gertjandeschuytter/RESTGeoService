@@ -23,7 +23,7 @@ namespace GeoService_BusinessLayer.Services {
             }
             catch (Exception ex)
             {
-                throw new RiverServiceException("geefLandenRivier - error - ", ex);
+                throw new RiverServiceException("geefLandenRivier - error - " +  ex.Message);
             }
         }
         public River RivierWeergeven(int riverId)
@@ -53,7 +53,7 @@ namespace GeoService_BusinessLayer.Services {
             }
             catch (Exception ex)
             {
-                throw new RiverServiceException("Rivier toevoegen - error", ex);
+                throw new RiverServiceException("Rivier toevoegen - error - " + ex.Message);
             }
         }
         public void RivierVerwijderen(int riverId)
@@ -72,23 +72,42 @@ namespace GeoService_BusinessLayer.Services {
             }
         }
 
+        public List<River> geefRivierenLand(int countryId)
+        {
+            try
+            {
+                return _repository.geefRivierenLand(countryId);
+            }
+            catch (Exception ex)
+            {
+                throw new RiverServiceException("geefRivierenLand - error - " + ex.Message);
+            }
+        }
+
         public River UpdateRiver(River river)
         {
-            if (river == null)
+            try
             {
-                throw new RiverServiceException("rivier is null.");
+                if (river == null)
+                {
+                    throw new RiverServiceException("rivier is null.");
+                }
+                if (!_repository.BestaatRivier(river.Id))
+                {
+                    throw new RiverServiceException("rivier bestaat niet.");
+                }
+                River riverDb = _repository.RivierWeergeven(river.Id);
+                if (riverDb == river)
+                {
+                    throw new RiverServiceException("Er zijn geen verschillen met het origineel.");
+                }
+                _repository.RivierUpdaten(river);
+                return river;
             }
-            if (!_repository.BestaatRivier(river.Id))
+            catch (Exception ex)
             {
-                throw new RiverServiceException("rivier bestaat niet.");
+                throw new RiverServiceException("UpdateRiver - error - " + ex.Message);
             }
-            River riverDb = _repository.RivierWeergeven(river.Id);
-            if (riverDb == river)
-            {
-                throw new RiverServiceException("Er zijn geen verschillen met het origineel.");
-            }
-            _repository.RivierUpdaten(river);
-            return river;
         }
     }
 }

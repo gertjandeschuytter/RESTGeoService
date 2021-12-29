@@ -32,11 +32,12 @@ namespace GeoService_RESTLayer.Controllers {
             this.riverService = riverService;
             _loghandler = loghandler;
         }
-        //Continent
+        //Continent ==> IN ORDE 
         [HttpGet]
         [Route("Continent/{continentId}")]
         public ActionResult<ContinentRESTOutputDTO> GETContinent(int continentId)
         {
+            _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  GETContinent was called.");
             try
             {
                 Continent continent = continentService.ContinentWeergeven(continentId);
@@ -45,14 +46,15 @@ namespace GeoService_RESTLayer.Controllers {
             }
             catch (Exception ex)
             {
-                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: GetContinent met meegegeven (ID: {continentId}) kan niet worden opgevraagd " + ex.Message);
-                return NotFound(ex);
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: GETContinent met meegegeven (ID: {continentId}) kan niet worden opgevraagd " + ex.Message);
+                return NotFound(ex.Message);
             }
         }
         [HttpPost]
         [Route("Continent/")]
         public ActionResult<ContinentRESTOutputDTO> POSTContinent([FromBody] ContinentRESTInputDTO dtoObject)
         {
+            _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  POSTContinent was called.");
             try
             {
                 Continent continent = continentService.ContinentToevoegen(MapToDomain.MapToContinentDomain(dtoObject));
@@ -61,14 +63,15 @@ namespace GeoService_RESTLayer.Controllers {
             }
             catch (Exception ex)
             {
-                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: POST Continent - kon niet worden aangemaakt " + ex.Message);
-                return BadRequest(ex);
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: POSTContinent - kon niet worden aangemaakt " + ex.Message);
+                return BadRequest(ex.Message);
             }
         }
         [HttpDelete]
         [Route("Continent/{continentId}")]
         public ActionResult DELETEContinent(int continentId)
         {
+            _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  DELETEContinent was called.");
             try
             {
                 continentService.ContinentVerwijderen(continentId);
@@ -77,7 +80,7 @@ namespace GeoService_RESTLayer.Controllers {
             }
             catch (Exception ex)
             {
-                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: DeleteContinent failed " + ex.Message);
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: DELETEContinent failed " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
@@ -85,28 +88,24 @@ namespace GeoService_RESTLayer.Controllers {
         [Route("Continent/{continentId}")]
         public ActionResult<ContinentRESTOutputDTO> PUTContinent(int continentId, [FromBody] ContinentRESTInputDTO dtoObject)
         {
+            _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  PUTContinent was called.");
             try
             {
-                if (string.IsNullOrWhiteSpace(dtoObject.Name) || dtoObject == null)
-                {
-                    _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: The continent to be updated contains whitespaces or is null.");
-                    return BadRequest($"The continent to be updated contains whitespaces or is null.");
-                }
-                Continent continent = MapToDomain.MapToContinentDomain(dtoObject);
+                Continent continent = null;
                 continent.ZetId(continentId);
-                continentService.ContinentUpdaten(continent);
-                continent = continentService.ContinentWeergeven(continentId);
-                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  PutContinent was succesful.");
+                continent = continentService.ContinentUpdaten(MapToDomain.MapToContinentDomain(dtoObject));
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  PUTContinent was succesful.");
                 return CreatedAtAction(nameof(GETContinent), new { continentId = continent.Id }, MapFromDomain.MapFromContinentDomain(url, continent, countryService));
             }
             catch (Exception ex)
             {
-                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: PutContinent failed " + ex.Message);
-                return BadRequest(ex);
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: PUTContinent failed " + ex.Message);
+                return BadRequest(ex.Message);
             }
         }
+        //------------------------------------------------------------------------------------------------------------------------->
 
-        //countries
+        //countries 
         [HttpGet]
         [Route("Continent/{continentId}/Country/{countryId}")]
         public ActionResult<CountryRESTOutputDTO> GETCountry(int continentId, int countryId)
@@ -124,13 +123,13 @@ namespace GeoService_RESTLayer.Controllers {
                     return BadRequest($"Country is not in the given continent");
                 }
                 Country country = countryService.LandWeergeven(countryId);
-                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  GetCountry was succesful.");
-                return Ok(MapFromDomain.MapFromCountryDomain(url, country, cityService));
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  GETCountry was succesful.");
+                return Ok(MapFromDomain.MapFromCountryDomain(url, country, cityService, riverService));
             }
             catch (Exception ex)
             {
-                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: GetCountry failed " + ex.Message);
-                return NotFound(ex);
+                _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: GETCountry failed " + ex.Message);
+                return NotFound(ex.Message);
             }
         }
 
@@ -145,10 +144,14 @@ namespace GeoService_RESTLayer.Controllers {
                     _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  The filled in continentId does not match the id given in the DTO.");
                     return BadRequest("The filled in continentId does not match the id given in the DTO.");
                 }
-                //voeg een transactie toe in landtoevoegen om ook ondertussen het continent up te daten
+                if (!continentService.BestaatContinent(continentId))
+                {
+                    _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  The filled in continentId does not match the id given in the DTO.");
+                    return BadRequest("The filled in continentId does not match the id given in the DTO.");
+                }
                 Country country = countryService.LandToevoegen(MapToDomain.MapToCountryDomain(dtoObject, continentService));
                 _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  POSTCountry was succesful.");
-                return CreatedAtAction(nameof(GETCountry), new { continentId, countryId = country.Id }, MapFromDomain.MapFromCountryDomain(url, country, cityService));
+                return CreatedAtAction(nameof(GETCountry), new { continentId, countryId = country.Id }, MapFromDomain.MapFromCountryDomain(url, country, cityService, riverService));
             }
             catch (Exception ex)
             {
@@ -161,7 +164,6 @@ namespace GeoService_RESTLayer.Controllers {
         [Route("Continent/{continentId}/Country/{countryId}")]
         public ActionResult DELETECountry(int continentId, int countryId)
         {
-            Country c = null;
             try
             {
                 if (!continentService.BestaatContinent(continentId))
@@ -174,7 +176,6 @@ namespace GeoService_RESTLayer.Controllers {
                     _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: The country does not exist.");
                     return BadRequest($"The country does not exist.");
                 }
-                c = countryService.LandWeergeven(countryId);
                 if (cityService.HeeftSteden(countryId))
                 {
                     _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE:  The given country cannot be removed because it still contains cities.");
@@ -235,7 +236,8 @@ namespace GeoService_RESTLayer.Controllers {
                 country.ZetId(countryId);
                 countryService.LandUpdaten(country);
                 _loghandler.LogRequestOrResponse($"DATE: {DateTime.Now} - MESSAGE: PutLand methode werdt succesvol opgeroepen.");
-                return CreatedAtAction(nameof(GETCountry), new { continentId, countryId = country.Id }, MapFromDomain.MapFromCountryDomain(url, country, cityService));
+                //return CreatedAtAction(nameof(GETCountry), new { continentId, countryId = country.Id }, MapFromDomain.MapFromCountryDomain(url, country, cityService));
+                return CreatedAtAction(nameof(GETCountry), new { continentId, countryId = country.Id });
             }
             catch (Exception ex)
             {

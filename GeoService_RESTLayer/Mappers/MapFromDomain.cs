@@ -32,7 +32,7 @@ namespace GeoService_RESTLayer.Mappers {
             }
         }
 
-        public static CountryRESTOutputDTO MapFromCountryDomain(string url, Country country, CityService cityService)
+        public static CountryRESTOutputDTO MapFromCountryDomain(string url, Country country, CityService cityService, RiverService riverService)
         {
             try
             {
@@ -43,7 +43,8 @@ namespace GeoService_RESTLayer.Mappers {
                                         .Where(cp => cp.IsCapital)
                                         .Select(x => countryURL + $"/City/{x.Id}")
                                         .ToList();
-                CountryRESTOutputDTO DTO_Object = new(countryURL, country.Name, country.Population, country.Surface, continentURL, capitals, cities);
+                List<string> rivieren = riverService.geefRivierenLand(country.Id).Select(x => url + $"/api/River/{x.Id}").ToList();
+                CountryRESTOutputDTO DTO_Object = new(countryURL, country.Name, country.Population, country.Surface, continentURL, capitals, cities, rivieren);
                 return DTO_Object;
             }
             catch (Exception ex)

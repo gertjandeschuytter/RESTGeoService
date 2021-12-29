@@ -59,7 +59,6 @@ namespace GeoService_DataLayer.ADO {
             {
                 connection.Close();
             }
-
         }
         public River RivierWeergeven(int riverId)
         {
@@ -256,6 +255,39 @@ namespace GeoService_DataLayer.ADO {
             finally
             {
                 conn.Close();
+            }
+        }
+
+        public List<River> geefRivierenLand(int countryId)
+        {
+            string sql =
+                "SELECT  River.* FROM[dbo].[CountryRiver] CountryRiver " +
+                "INNER JOIN[dbo].[Country] Country ON Country.CountryId = CountryRiver.CountryId " +
+                "INNER JOIN[dbo].[River] River ON River.RiverId = CountryRiver.RiverId " +
+                "WHERE Country.CountryId = @countryId";
+            SqlConnection connection = GetConnection();
+            using SqlCommand command = new(sql, connection);
+            try
+            {
+                connection.Open();
+                List<River> Rivers = new();
+                command.Parameters.AddWithValue("@countryId", countryId);
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    River river = new((string)reader["Name"], (int)reader["Length"]);
+                    river.ZetId((int)reader["RiverId"]);
+                    Rivers.Add(river);
+                }
+                return Rivers;
+            }
+            catch (Exception ex)
+            {
+                throw new RiverRepositoryADOException("GeefLandenContinentADO - error", ex);
+            }
+            finally
+            {
+                connection.Close();
             }
         }
     }

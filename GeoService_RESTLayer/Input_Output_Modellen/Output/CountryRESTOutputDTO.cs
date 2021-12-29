@@ -12,8 +12,9 @@ namespace GeoService_RESTLayer.Input_Output_Modellen.Output {
         public string ContinentId { get; set; }
         public List<string> Capitals { get; set; }
         public List<string> Cities { get; set; }
+        public List<string> Rivieren { get; set; }
 
-        public CountryRESTOutputDTO(string id, string naam, int bevolkingsaantal, decimal oppervlakte, string continentId, List<string> capitals , List<string> cities)
+        public CountryRESTOutputDTO(string id, string naam, int bevolkingsaantal, decimal oppervlakte, string continentId, List<string> capitals , List<string> cities, List<string> rivieren)
         {
             Id = id;
             Name = naam;
@@ -22,6 +23,7 @@ namespace GeoService_RESTLayer.Input_Output_Modellen.Output {
             ContinentId = continentId;
             Capitals = capitals;
             Cities = cities;
+            Rivieren = rivieren;
         }
     }
 }
