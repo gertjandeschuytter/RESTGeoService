@@ -119,6 +119,7 @@ namespace DomeinLaag.Services {
                     throw new ContinentServiceException("Er zijn geen verschillen met het origineel.");
                 }
                 _repository.ContinentUpdaten(continent);
+                continent = ContinentWeergeven(continent.Id);
                 return continent;
             }
             catch (Exception ex)

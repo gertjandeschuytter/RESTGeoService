@@ -1,3 +1,4 @@
+using System.IO;
 using DataLaag.ADO;
 using DomeinLaag.Interfaces;
 using DomeinLaag.Services;
@@ -7,17 +8,11 @@ using GeoService_DataLayer.ADO;
 using GeoService_RESTLayer.LogHandler;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GeoService_RESTLayer {
     public class Startup {
@@ -48,7 +43,6 @@ namespace GeoService_RESTLayer {
             services.AddSingleton<CountryService>();
             services.AddSingleton<CityService>();
             services.AddSingleton<RiverService>();
-            services.AddSingleton<LogRequestAndResponseHandler>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GeoService_RESTLayer", Version = "v1" });
@@ -56,17 +50,21 @@ namespace GeoService_RESTLayer {
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            var path = Directory.GetCurrentDirectory();
+            loggerFactory.AddFile($"{path}\\Logs\\APILogging.txt");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GeoService_RESTLayer v1"));
             }
-
+            app.UseHttpsRedirection();
             app.UseRouting();
-
+            app.UseStaticFiles();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

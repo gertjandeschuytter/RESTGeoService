@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoService_DataLayer", "Geo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADOTestOmgeving", "ADOTestOmgeving\ADOTestOmgeving.csproj", "{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Businesslayer_Tests", "Businesslayer_Tests\Businesslayer_Tests.csproj", "{F22B2BA5-35DF-4ABE-BE35-3B4AB7B272B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoService_RESTLayer", "GeoService_RESTLayer\GeoService_RESTLayer.csproj", "{E45A379F-A91E-45ED-B202-DCFB2137766A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoService_RESTLayer", "GeoService_RESTLayer\GeoService_RESTLayer.csproj", "{E45A379F-A91E-45ED-B202-DCFB2137766A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests_GeoService", "Tests_GeoService\Tests_GeoService.csproj", "{7CD83642-3C0F-4301-9AA4-8DC252931379}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +31,14 @@ Global
 		{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD9FEF5A-67B9-45E6-AFAE-58B6F6FEA53D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F22B2BA5-35DF-4ABE-BE35-3B4AB7B272B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F22B2BA5-35DF-4ABE-BE35-3B4AB7B272B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F22B2BA5-35DF-4ABE-BE35-3B4AB7B272B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F22B2BA5-35DF-4ABE-BE35-3B4AB7B272B1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E45A379F-A91E-45ED-B202-DCFB2137766A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E45A379F-A91E-45ED-B202-DCFB2137766A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E45A379F-A91E-45ED-B202-DCFB2137766A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E45A379F-A91E-45ED-B202-DCFB2137766A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CD83642-3C0F-4301-9AA4-8DC252931379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CD83642-3C0F-4301-9AA4-8DC252931379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CD83642-3C0F-4301-9AA4-8DC252931379}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CD83642-3C0F-4301-9AA4-8DC252931379}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,17 +11,13 @@ using System.Threading.Tasks;
 
 namespace GeoService_RESTLayer.Mappers {
     public class MapFromDomain {
-        public static ContinentRESTOutputDTO MapFromContinentDomain(string url, Continent continent, CountryService countryservice)
+        public static ContinentRESTOutputDTO MapFromContinentDomain(string url, Continent continent)
         {
             try
             {
                 string continentURL = $"{url}/api/Continent/{continent.Id}";
-                int PopulationAmount = 0;
                 var countryList = continent.GetCountries();
-                foreach (var c in countryList)
-                {
-                    PopulationAmount += c.Population;
-                }
+                var PopulationAmount = continent.GetPopulation();
                 List<string> countries = countryList.Select(c => continentURL + $"/Country/{c.Id}").ToList();
                 ContinentRESTOutputDTO DTO_Object = new(continentURL, continent.Name, PopulationAmount, countries.Count, countries);
                 return DTO_Object;
@@ -49,7 +45,7 @@ namespace GeoService_RESTLayer.Mappers {
             }
             catch (Exception ex)
             {
-                throw new MapFromDomainException("MapFromDomain - MapFromCountryDomain ", ex);
+                throw new MapFromDomainException("MapFromDomain - MapFromCountryDomain - "+ ex.Message);
             }
         }
 
@@ -66,7 +62,7 @@ namespace GeoService_RESTLayer.Mappers {
             }
             catch (Exception ex)
             {
-                throw new MapFromDomainException("MapFromDomain - MapFromCityDomain", ex);
+                throw new MapFromDomainException("MapFromDomain - MapFromCityDomain - "+ ex.Message);
             }
         }
 
@@ -86,7 +82,7 @@ namespace GeoService_RESTLayer.Mappers {
             }
             catch (Exception ex)
             {
-                throw new MapFromDomainException("MapFromDomain - MapFromRiverDomain ", ex);
+                throw new MapFromDomainException("MapFromDomain - MapFromRiverDomain - "+ ex.Message);
             }
         }
     }

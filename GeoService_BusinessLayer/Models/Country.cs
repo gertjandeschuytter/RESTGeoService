@@ -13,7 +13,9 @@ namespace GeoService_BusinessLayer.Models {
         public int Population { get; private set; }
         public decimal Surface { get; private set; }
         public Continent Continent { get; private set; }
-        private List<River> Rivers { get; set; } 
+        private List<River> Rivers { get; set; } = new();
+        private List<City> cities { get; set; } = new();
+        private List<City> capitals { get; set; } = new();
         //checken of dit werkt bij het finaliseren
 
         public Country(int id, string name, int population, decimal surface, Continent continent) : this(name, population, surface, continent)
@@ -31,8 +33,11 @@ namespace GeoService_BusinessLayer.Models {
 
         public void AddRiver(River river)
         {
-            Rivers = new List<River>();
             Rivers.Add(river);
+        }
+        public void RemoveRiver(River r)
+        {
+            Rivers.Remove(r);
         }
         //setters
         public void ZetId(int id)
@@ -70,16 +75,88 @@ namespace GeoService_BusinessLayer.Models {
         public void ZetContinent(Continent continent)
         {
             if (continent == null)
+                throw new CountryException("Country: Country can't be null!");
+            else
             {
-                throw new CountryException("Continent kan niet null zijn.");
+                if (Continent != null)
+                {
+                    Continent.VerwijderLandVanContinent(this);
+                }
+                Continent = continent;
+                Continent.ZetlandOpContinent(this);
             }
-            Continent = continent;
         }
 
-        //extra
-        //public void RemoveRiver(River river)
-        //{
-        //    Rivers.Remove(river);
-        //}
+        public IReadOnlyList<City> GetCities()
+        {
+            return cities.AsReadOnly();
+        }
+        public IReadOnlyList<City> GetCapitals()
+        {
+            return capitals.AsReadOnly();
+        }
+        public IReadOnlyList<River> GetRivers()
+        {
+            return Rivers.AsReadOnly();
+        }
+        public void ZetHoofdstad(City c)
+        {
+            if (!c.IsCapital)
+                throw new CountryException("Country: The city was not a capital");
+            else if (capitals.Contains(c))
+                throw new CountryException("Country: This city is allready a capital of this country");
+            else if (!cities.Contains(c))
+            {
+                throw new CountryException("Country: This city is not a part of this country");
+            }
+            capitals.Add(c);
+        }
+        public void ZetStad(City c)
+        {
+            if (cities.Contains(c))
+                throw new CountryException("This city is allready oart of this country");
+            else if (c.Country != this)
+                throw new CountryException("Country: The country of this city did not equal this country");
+            else
+            {
+                int total = 0;
+                foreach (City r in cities)
+                {
+                    total += r.Population;
+                }
+                total += c.Population;
+                if (total > Population)
+                    throw new CountryException("Country: The population of ths cities in a country can not be bigger than the" +
+                        " population of that country");
+                cities.Add(c);
+            }
+        }
+        public void RemoveCity(City c)
+        {
+            cities.Remove(c);
+            capitals.Remove(c);
+        }
+        public void RemoveAsCapital(City c)
+        {
+            if (capitals.Contains(c))
+            {
+                capitals.Remove(c);
+                c.ZetIsHoofdstad(false);
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Country country &&
+                   Name == country.Name &&
+                   Population == country.Population &&
+                   Surface == country.Surface;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Population, Surface);
+        }
     }
 }
+

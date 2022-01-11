@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace GeoService_BusinessLayer.Models {
     public class River {
+        public River(string name, int length, List<Country> countries) : this(name, length)
+        {
+            SetCountries(countries);
+        }
         public River(string name, int length)
         {
             ZetNaam(name);
@@ -19,13 +23,24 @@ namespace GeoService_BusinessLayer.Models {
 
         public void SetCountries(List<Country> countries)
         {
-            if (countries == null) throw new RiverException("River: List of countries is null");
-            if (countries.Count < 1) throw new RiverException("River: River must belong to at least one country");
-            if (countries.Count != countries.Distinct().Count()) throw new RiverException("River: The list of countries contains atleast one or more times the same value");
-            foreach (Country c in countries)
+            if (countries == null || countries.Count < 1)
+                throw new RiverException("River: River must belong to at least one country");
+            else
             {
-                CountriesWhereRiver.Add(c);
-                c.AddRiver(this);
+                if (countries.Count == countries.Distinct().Count())
+                {
+                    foreach (Country cr in CountriesWhereRiver)
+                    {
+                        cr.RemoveRiver(this);
+                    }
+                    CountriesWhereRiver = new List<Country>();
+                    foreach (Country r in countries)
+                    {
+                        CountriesWhereRiver.Add(r);
+                        r.AddRiver(this);
+                    }
+                }
+                else throw new RiverException("River: The list of countries contained doubles");
             }
         }
         public IReadOnlyList<Country> GetCountries()

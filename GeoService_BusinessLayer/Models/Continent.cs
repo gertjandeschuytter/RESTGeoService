@@ -16,7 +16,6 @@ namespace GeoService_BusinessLayer.Models {
         public Continent(string name, int id) : this(name)
         {
             ZetId(id);
-            ZetNaam(name);
         }
         public Continent(string name)
         {
@@ -26,20 +25,6 @@ namespace GeoService_BusinessLayer.Models {
         {
             return _countries.AsReadOnly();
         }
-        public void AddCountry(Country country)
-        {
-            if (_countries.Contains(country))
-            {
-                throw new ContinentException("This country is already in this continent");
-            }
-            foreach (var item in _countries)
-            {
-                if (item.Name == country.Name)
-                    throw new ContinentException("The name of a country in a continent must always be unique!");
-            }
-            _countries.Add(country);
-        }
-        //setters
         public void ZetId(int id)
         {
             if (id <= 0) throw new ContinentException("Id moet groter zijn dan 0.");
@@ -58,17 +43,49 @@ namespace GeoService_BusinessLayer.Models {
             }
             Population = population;
         }
-        //extra
-        //public int GetPopulation()
-        //{
-        //    return Population;
-        //}
+        public int GetPopulation()
+        {
+            int aantal = 0;
+            foreach (Country l in _countries)
+            {
+                aantal += l.Population;
+            }
+            return aantal;
+        }
+        public void RemoveCountry(Country country)
+        {
+            if (_countries.Contains(country))
+                _countries.Remove(country);
+            else throw new ContinentException("Continent: the givzn country is not part of the continent that was given!");
+        }
+        public void ZetlandOpContinent(Country c)
+        {
+            if (!c.Continent.Equals(this))
+                throw new ContinentException("Continent: the continent of this country did not equal this continent");
+            foreach (Country r in _countries)
+            {
+                if (r.Equals(c))
+                    throw new ContinentException("Continent: this country is allready part of this continent!");
+                else if (r.Name == c.Name)
+                    throw new ContinentException("Continent: The name of the country must be unique within the continent!");
+            }
+            _countries.Add(c);
+        }
+        public void ZetLanden(List<Country> countries)
+        {
+            List<Country> newCountries = new List<Country>();
+            foreach (Country p in countries)
+            {
+                newCountries.Add(p);
+            }
+            _countries = newCountries;
+        }
+        public void VerwijderLandVanContinent(Country c)
+        {
+            if (_countries.Contains(c))
+                _countries.Remove(c);
+            else throw new ContinentException("Continent: the given country is not part of the continent that was given!");
+        }
 
-        //public void RemoveCountry(Country country)
-        //{
-        //    if (_countries.Contains(country))
-        //        _countries.Remove(country);
-        //    else throw new ContinentException("Continent: the givzn country is not part of the continent that was given!");
-        //}
     }
 }

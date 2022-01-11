@@ -156,9 +156,16 @@ namespace DataLaag.ADO {
                 command.Parameters.AddWithValue("@CountryId", countryId);
                 IDataReader reader = command.ExecuteReader();
                 reader.Read();
-                Continent continent = new((string)reader["ContinentName"], (int)reader["ContinentId"]);
-                Country country = new(countryId, (string)reader["Name"], (int)reader["Population"], (decimal)reader["Surface"], continent);
-                continent.AddCountry(country);
+                Continent continent = null;
+                Country country = null;
+                if(continent == null)
+                {
+                    continent = new((string)reader["ContinentName"], (int)reader["ContinentId"]);
+                }
+                if (country == null)
+                {
+                    country = new(countryId, (string)reader["Name"], (int)reader["Population"], (decimal)reader["Surface"], continent);
+                }
                 reader.Close();
                 return country;
             }

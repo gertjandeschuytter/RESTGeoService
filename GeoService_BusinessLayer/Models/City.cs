@@ -16,17 +16,13 @@ namespace GeoService_BusinessLayer.Models {
         public City(int id, string name, int population, bool isCapital, Country country) : this(name,population,isCapital,country)
         {
             ZetId(id);
-            ZetNaam(name);
-            ZetBevolkingsaantal(population);
-            ZetIsHoofdstad(isCapital);
-            ZetLand(country);
         }
         public City(string name, int population, bool isCapital, Country country)
         {
             ZetNaam(name);
             ZetBevolkingsaantal(population);
-            ZetIsHoofdstad(isCapital);
             ZetLand(country);
+            ZetIsHoofdstad(isCapital);
         }
 
         //setters
@@ -56,15 +52,33 @@ namespace GeoService_BusinessLayer.Models {
         }
         public void ZetIsHoofdstad(bool isCapital)
         {
+            bool oldValue = IsCapital;
             IsCapital = isCapital;
+            if (isCapital == true && oldValue == false)
+            {
+                Country.ZetHoofdstad(this);
+            }
+            else if (isCapital == false && oldValue == true)
+            {
+                Country.RemoveAsCapital(this);
+            }
         }
         public void ZetLand(Country country)
         {
             if (country == null)
+                throw new CityException("City: City must belong to a country!");
+            else
             {
-                throw new CityException("Land kan niet null zijn.");
+                Country oldCountry = Country;
+                Country = country;
+                if (oldCountry != null)
+                {
+                    oldCountry.RemoveCity(this);
+                }
+                Country.ZetStad(this);
+                if (IsCapital)
+                    Country.ZetHoofdstad(this);
             }
-            Country = country;
         }
     }
 }

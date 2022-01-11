@@ -132,7 +132,6 @@ namespace DataLaag.ADO {
                             }
                             country = new((string)reader["CountryName"], (int)reader["CountryPopulation"], (decimal)reader["Surface"], continent);
                             country.ZetId((int)reader["CountryId"]);
-                            continent.AddCountry(country);
                         }
                     }
                     reader.Close();

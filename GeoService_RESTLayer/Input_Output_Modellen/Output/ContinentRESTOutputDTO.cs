@@ -19,5 +19,9 @@ namespace GeoService_RESTLayer.Input_Output_Modellen.Input {
             amount_countries = aantalLanden;
             Countries = landen;
         }
+
+        public ContinentRESTOutputDTO()
+        {
+        }
     }
 }

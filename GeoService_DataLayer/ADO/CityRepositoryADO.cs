@@ -58,7 +58,6 @@ namespace DataLaag.ADO
                     if (country == null)
                     {
                         country = new((int)reader["CountryId"], (string)reader["CountryName"], (int)reader["CountryPopulation"], (decimal)reader["Surface"], continent);
-                        continent.AddCountry(country);
                     }
                     City stad = new((int)reader["Id"], (string)reader["Name"], (int)reader["Population"], (bool)reader["IsCapital"], country);
                     steden.Add(stad);

@@ -34,12 +34,11 @@ namespace GeoService_RESTLayer.Mappers {
             {
                 Continent continent = continentService.ContinentWeergeven(dtoObject.ContinentId);
                 Country country = new(dtoObject.Name, dtoObject.Population, dtoObject.Surface, continent);
-                continent.AddCountry(country);
                 return country;
             }
             catch (Exception ex)
             {
-                throw new MapToDomainException("MapToDomain - MapToCountryDomain ", ex);
+                throw new MapToDomainException("MapToDomain - MapToCountryDomain - "+ ex.Message);
             }
         }
 
@@ -58,7 +57,7 @@ namespace GeoService_RESTLayer.Mappers {
             }
             catch (Exception ex)
             {
-                throw new MapToDomainException("MapNaarStadDomein - MapToCityDomain ", ex);
+                throw new MapToDomainException("MapNaarStadDomein - MapToCityDomain - "+ ex.Message);
             }
         }
 
