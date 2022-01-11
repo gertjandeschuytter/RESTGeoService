@@ -5,7 +5,6 @@ using GeoService_BusinessLayer.Models;
 using GeoService_BusinessLayer.Services;
 using GeoService_RESTLayer.Input_Output_Modellen.Input;
 using GeoService_RESTLayer.Input_Output_Modellen.Output;
-using GeoService_RESTLayer.LogHandler;
 using GeoService_RESTLayer.Mappers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,19 +18,29 @@ namespace GeoService_RESTLayer.Controllers {
     [ApiController]
     [Route("/api")]
     public class GeoService_Controller : ControllerBase {
+        private readonly string url = "http://localhost:6385";
+
+
         private ContinentService continentService;
         private CityService cityService;
         private CountryService countryService;
         private RiverService riverService;
         private ILogger<GeoService_Controller> _loghandler;
-        private string url = "http://localhost:6385";
 
-        public GeoService_Controller(ContinentService continentService, CityService cityService, CountryService countryService, RiverService riverService, ILogger<GeoService_Controller> loghandler)
+        //public GeoService_Controller(ContinentService continentService, CityService cityService, CountryService countryService, RiverService riverService, ILogger<GeoService_Controller> loghandler)
+        //{
+        //    this.continentService = continentService;
+        //    this.cityService = cityService;
+        //    this.countryService = countryService;
+        //    this.riverService = riverService;
+        //    this._loghandler = loghandler;
+        //}
+        public GeoService_Controller(IContinentRepository continentrepo, ICityRepository cityRepo, ICountryRepository countryRepo, IRiverRepository riverRepo, ILogger<GeoService_Controller> loghandler)
         {
-            this.continentService = continentService;
-            this.cityService = cityService;
-            this.countryService = countryService;
-            this.riverService = riverService;
+            this.continentService = new(continentrepo);
+            this.cityService = new(cityRepo);
+            this.countryService = new(countryRepo);
+            this.riverService = new(riverRepo);
             this._loghandler = loghandler;
         }
         //Continent ==> IN ORDE 

@@ -5,7 +5,6 @@ using DomeinLaag.Services;
 using GeoService_BusinessLayer.Interfaces;
 using GeoService_BusinessLayer.Services;
 using GeoService_DataLayer.ADO;
-using GeoService_RESTLayer.LogHandler;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
